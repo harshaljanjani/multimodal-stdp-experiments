@@ -1,0 +1,74 @@
+{
+  "neuron_populations": [
+    {
+      "name": "INPUT",
+      "count": 100,
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": { "distribution": "uniform", "min": -75.0, "max": -65.0 },
+        "v_reset": -75.0,
+        "v_threshold": -50.0,
+        "tau_m": 10.0,
+        "i_background": { "distribution": "uniform", "min": 20.0, "max": 30.0 }
+      }
+    },
+    {
+      "name": "E",
+      "count": 4000,
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": -65.0, "v_reset": -65.0, "v_threshold": -50.0, "tau_m": 20.0
+      }
+    },
+    {
+      "name": "I",
+      "count": 1000,
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": -60.0, "v_reset": -65.0, "v_threshold": -52.0, "tau_m": 10.0
+      }
+    }
+  ],
+  "synaptic_connections": [
+    {
+      "source": "INPUT", "target": "E",
+      "topology": { "type": "fixed_probability", "probability": 0.1 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": 0.8, "std": 0.5 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 5 }
+      }
+    },
+    {
+      "source": "E", "target": "E",
+      "topology": { "type": "fixed_probability", "probability": 0.05 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": 1.0, "std": 0.1 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 10 }
+      }
+    },
+    {
+      "source": "E", "target": "I",
+      "topology": { "type": "fixed_probability", "probability": 0.1 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": 1.5, "std": 0.1 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 2 }
+      }
+    },
+    {
+      "source": "I", "target": "E",
+      "topology": { "type": "fixed_probability", "probability": 0.1 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": -2.0, "std": 0.2 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 2 }
+      }
+    },
+    {
+      "source": "I", "target": "I",
+      "topology": { "type": "fixed_probability", "probability": 0.1 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": -1.5, "std": 0.2 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 2 }
+      }
+    }
+  ]
+}

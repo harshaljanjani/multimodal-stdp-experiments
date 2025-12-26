@@ -1,0 +1,62 @@
+{
+  "neuron_populations": [
+    {
+      "name": "E",
+      "count": 1600,
+      "positions": { "type": "grid" },
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": { "distribution": "uniform", "min": -70.0, "max": -60.0 },
+        "v_reset": -65.0,
+        "v_threshold": -50.0,
+        "tau_m": 20.0,
+        "i_background": { "distribution": "uniform", "min": 18.0, "max": 22.0 }
+      }
+    },
+    {
+      "name": "I",
+      "count": 400,
+      "positions": { "type": "random" },
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": -60.0, "v_reset": -65.0, "v_threshold": -52.0, "tau_m": 10.0,
+        "i_background": { "distribution": "uniform", "min": 10.0, "max": 15.0 }
+      }
+    }
+  ],
+  "synaptic_connections": [
+    {
+      "source": "E", "target": "E",
+      "topology": {
+        "type": "gaussian_distance",
+        "p_max": 0.1,
+        "sigma": 0.1,
+        "allow_autapses": false
+      },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": 0.5, "std": 0.1 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 10 }
+      }
+    },
+    {
+      "source": "E", "target": "I",
+      "topology": { "type": "fixed_probability", "probability": 0.05 },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": 0.8, "std": 0.1 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 2 }
+      }
+    },
+    {
+      "source": "I", "target": "E",
+      "topology": {
+        "type": "gaussian_distance",
+        "p_max": 0.2,
+        "sigma": 0.25
+      },
+      "synapse": {
+        "weight": { "distribution": "normal", "mean": -1.0, "std": 0.2 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 2 }
+      }
+    }
+  ]
+}
