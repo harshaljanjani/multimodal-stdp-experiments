@@ -1,0 +1,26 @@
+{
+    "neuron_populations": [
+        {
+            "name": "Left_Eye",
+            "count": 100,
+            "type": "sensory"
+        },
+        {
+            "name": "Turn_Left_Motor",
+            "count": 50,
+            "type": "motor",
+            "params": {
+                "v_leak": -70.0, "v_reset": -65.0, "v_threshold": -55.0,
+                "tau_m": 10.0
+            }
+        }
+    ],
+    "synaptic_connections": [
+        {
+            "source": "Left_Eye",
+            "target": "Turn_Left_Motor",
+            "topology": {"type": "fixed_probability", "probability": 0.8},
+            "synapse": {"weight": 1.5, "delay": 2.0}
+        }
+    ]
+}

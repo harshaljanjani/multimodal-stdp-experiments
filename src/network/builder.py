@@ -1,6 +1,6 @@
 import cupy as cp
 import numpy as np
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 from src.network import topology
 
 def _parse_params(param_config: Any, num_items: int) -> cp.ndarray:
@@ -19,7 +19,7 @@ def _parse_params(param_config: Any, num_items: int) -> cp.ndarray:
         return cp.random.uniform(min_val, max_val, num_items).astype(cp.float32)
     raise ValueError(f"Unknown parameter format: {param_config}")
 
-def build_network(config: Dict[str, Any]) -> Dict[str, cp.ndarray]:
+def build_network(config: Dict[str, Any]) -> Tuple[Dict[str, cp.ndarray], Dict[str, Any]]:
     pop_names = [p["name"] for p in config["neuron_populations"]]
     if len(pop_names) != len(set(pop_names)):
         raise ValueError("Duplicate population names found in configuration.")
@@ -39,7 +39,8 @@ def build_network(config: Dict[str, Any]) -> Dict[str, cp.ndarray]:
         count = pop["count"]
         start = current_offset
         end = current_offset + count
-        pop_info[name] = {"start": start, "end": end, "count": count}
+        pop_type = pop.get("type", "lif")
+        pop_info[name] = {"start": start, "end": end, "count": count, "type": pop_type}
         if "positions" in pop:
             pos_config = pop["positions"]
             if pos_config["type"] == "grid":
@@ -123,4 +124,4 @@ def build_network(config: Dict[str, Any]) -> Dict[str, cp.ndarray]:
         network["tau_trace_post"] = cp.full(total_neurons, 20.0, dtype=cp.float32)
     if "i_background" not in network:
          network["i_background"] = cp.zeros(total_neurons, dtype=cp.float32)
-    return network
+    return network, pop_info
