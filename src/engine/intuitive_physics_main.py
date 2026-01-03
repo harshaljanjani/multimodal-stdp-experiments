@@ -11,7 +11,6 @@ try:
 except ImportError:
     print("Error: Isaac Sim libraries not found. Please run this script using the appropriate Isaac Sim launcher (e.g., ./python.sh).")
     sys.exit(1)
-import asyncio
 
 def get_synapse_indices(network, pop_info, source_pop_name, target_pop_name):
     source_pop = pop_info[source_pop_name]
@@ -39,12 +38,11 @@ def encode_velocity_to_spikes(pop_info, pop_name, velocity_magnitude):
     )
     return cp.asarray(firing_indices, dtype=cp.int32)
 
-async def run_simulation(simulation_app):
+def run_simulation(simulation_app):
     print("[DEBUG] run_simulation coroutine started.")
     from omni.isaac.core import World
     from omni.isaac.core.objects import DynamicSphere
     from pxr import Gf
-    loop = asyncio.get_running_loop()
     base_path = Path(__file__).resolve().parent.parent.parent
     network_config = load_config(base_path / "config" / "network" / "intuitive_physics_test.json")
     sim_config = load_config(base_path / "config" / "simulation" / "default_run.json")
@@ -84,9 +82,9 @@ async def run_simulation(simulation_app):
             color=np.array([0.0, 0.0, 1.0])
         )
     )
-    print("[DEBUG] Awaiting world.reset_async()...")
-    await world.reset_async()
-    print("[DEBUG] world.reset_async() has completed.")
+    print("[DEBUG] Resetting world...")
+    world.reset()
+    print("[DEBUG] world.reset() has completed.")
     num_trials = 50
     # each trial is 200 ms.
     trial_duration_ms = 200
@@ -99,14 +97,15 @@ async def run_simulation(simulation_app):
         ball_a.set_linear_velocity(np.zeros(3))
         ball_b.set_linear_velocity(np.zeros(3))
         for _ in range(10): 
-            await world.step_async()
+            world.step(render=True)
         for step in range(trial_steps):
             print(f"\r    -> Trial {i+1}, Step {step+1}/{trial_steps}", end="")
             current_time_ms = step * sim_config['dt']
             motor_spikes = None
             # action.
             if 0 <= current_time_ms < 10:
-                ball_a.apply_force(Gf.Vec3f(0, 25, 0))
+                impulse_velocity = np.array([0, 2.5, 0])
+                ball_a.set_linear_velocity(impulse_velocity)
                 pop = pop_info['Push_A_Motor']
                 motor_spikes = cp.arange(pop['start'], pop['end'], dtype=cp.int32)
             # sense.
@@ -120,7 +119,7 @@ async def run_simulation(simulation_app):
             # think.
             snn_simulator.step(all_sensory_spikes)
             # act.
-            await world.step_async()
+            world.step(render=True)
         print()
             
     print("=== TRAINING COMPLETE ===")
@@ -129,7 +128,7 @@ async def run_simulation(simulation_app):
     w2_final = get_average_weight(network, moving_a_to_moving_b_synapses)
     print("\n=== LEARNING VERIFICATION ===")
     print(f"Avg. Weight (Push -> A_is_Moving): {w1_initial:.4f} -> {w1_final:.4f}")
-    print(f"Avg. Weight (A_is_Moving -> B_is_Moving): {w2_final:.4f} -> {w2_final:.4f}\n")
+    print(f"Avg. Weight (A_is_Moving -> B_is_Moving): {w2_initial:.4f} -> {w2_final:.4f}\n")
     if w1_final > w1_initial * 2 and w2_final > w2_initial * 2:
         print("SUCCESS: Causal links were learned and strengthened via STDP.")
     else:
@@ -138,15 +137,12 @@ async def run_simulation(simulation_app):
 if __name__ == "__main__":
     simulation_app = SimulationApp({"headless": False})
     print("[DEBUG] SimulationApp object created. Waiting for Isaac Sim to initialize...")
-    async def run_and_shutdown():
-        try:
-            await run_simulation(simulation_app)
-        except Exception as e:
-            print(f"An error occurred during simulation: {e}")
-        finally:
-            print("[DEBUG] Simulation task finished or error occurred. Closing SimulationApp.")
-            simulation_app.close()
-    print("[DEBUG] Isaac Sim initialized. Scheduling main simulation coroutine.")
-    asyncio.ensure_future(run_and_shutdown())
-    while simulation_app.is_running():
-        simulation_app.update()
+    try:
+        run_simulation(simulation_app)
+    except Exception as e:
+        print(f"An error occurred during simulation: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        print("[DEBUG] Simulation finished or error occurred. Closing SimulationApp.")
+        simulation_app.close()
