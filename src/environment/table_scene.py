@@ -1,0 +1,43 @@
+import numpy as np
+from omni.isaac.core.objects import DynamicSphere, FixedCuboid
+from src.agent.franka_controller import FrankaController
+
+def setup_scene(world):
+    # add table.
+    world.scene.add_default_ground_plane()
+    table = world.scene.add(
+        FixedCuboid(
+            prim_path="/World/table",
+            name="table",
+            position=np.array([0, 0, 0.35]),
+            scale=np.array([0.8, 1.5, 0.7]),
+            color=np.array([0.5, 0.5, 0.5]),
+        )
+    )
+    robot_controller = FrankaController(
+        prim_path="/World/Franka",
+        name="franka_robot",
+        position=np.array([0.0, 0.0, 0.7])
+    )
+    robot = robot_controller.create_robot()
+    world.scene.add(robot)
+    # add objs.
+    ball_a = world.scene.add(
+        DynamicSphere(
+            prim_path="/World/ball_a",
+            name="ball_a",
+            position=np.array([0, 0.4, 0.75]),
+            radius=0.04,
+            color=np.array([1.0, 0.0, 0.0])
+        )
+    )
+    ball_b = world.scene.add(
+        DynamicSphere(
+            prim_path="/World/ball_b",
+            name="ball_b",
+            position=np.array([0, 0.6, 0.75]),
+            radius=0.04,
+            color=np.array([0.0, 0.0, 1.0])
+        )
+    )
+    return robot_controller, ball_a, ball_b
