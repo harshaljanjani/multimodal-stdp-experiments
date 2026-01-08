@@ -6,8 +6,10 @@ class FrankaController:
         self.prim_path = prim_path
         self.name = name
         self.position = position
-        self.home_joint_positions = np.array([0, -0.785, 0, -2.356, 0, 1.571, 0.785, 0.04, 0.04])
-        self.push_joint_positions = np.array([0, -0.4, 0, -2.0, 0, 1.8, 0.785, 0.04, 0.04])
+        base_rotation = np.pi / 2
+        self.home_joint_positions = np.array([base_rotation, -0.785, 0, -2.356, 0, 1.571, 0.785, 0.04, 0.04])
+        self.pre_push_joint_positions = np.array([base_rotation, 0.95, 0.0, -1.8, 0.0, 2.1, 0.785, 0.04, 0.04])
+        self.push_joint_positions = np.array([base_rotation, 0.95, 0.0, -1.5, 0.0, 2.1, 0.785, 0.04, 0.04])
         self._robot_articulation = None
         self._articulation_controller = None
 
@@ -27,6 +29,11 @@ class FrankaController:
             self._articulation_controller = self._robot_articulation.get_articulation_controller()
         self.retract()
         print("Robot controller initialized")
+
+    def go_to_pre_push(self):
+        if self._articulation_controller is not None:
+            action = ArticulationAction(joint_positions=self.pre_push_joint_positions)
+            self._articulation_controller.apply_action(action)
 
     def push_forward(self):
         # push pos.
