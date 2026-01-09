@@ -1,0 +1,71 @@
+{
+  "neuron_populations": [
+    {
+      "name": "Object_A_Detector",
+      "count": 100,
+      "type": "sensory"
+    },
+    {
+      "name": "Object_B_Detector",
+      "count": 100,
+      "type": "sensory"
+    },
+    {
+      "name": "Franka_Extend_Motor",
+      "count": 30,
+      "type": "sensory"
+    },
+    {
+      "name": "A_is_Moving",
+      "count": 50,
+      "type": "lif",
+      "params": {
+        "v_leak": -70.0, "v_reset": -65.0, "v_threshold": -55.0, "tau_m": 20.0,
+        "i_background": 0.1
+      }
+    },
+    {
+      "name": "B_is_Moving",
+      "count": 50,
+      "type": "lif",
+      "params": {
+        "v_leak": -70.0, "v_reset": -65.0, "v_threshold": -55.0, "tau_m": 20.0,
+        "i_background": 0.1
+      }
+    }
+  ],
+  "synaptic_connections": [
+    {
+      "source": "Object_A_Detector",
+      "target": "A_is_Moving",
+      "topology": { "type": "fixed_probability", "probability": 0.7 },
+      "synapse": { "weight": 2.5, "delay": 2.0 }
+    },
+    {
+      "source": "Object_B_Detector",
+      "target": "B_is_Moving",
+      "topology": { "type": "fixed_probability", "probability": 0.7 },
+      "synapse": { "weight": 2.5, "delay": 2.0 }
+    },
+    {
+      "source": "Franka_Extend_Motor",
+      "target": "A_is_Moving",
+      "topology": { "type": "fixed_probability", "probability": 0.9 },
+      "synapse": {
+        "weight": { "distribution": "uniform", "min": 0.0, "max": 0.1 },
+        "delay": 5.0,
+        "plasticity": { "learning_rate": 0.005, "max_weight": 5.0 }
+      }
+    },
+    {
+      "source": "A_is_Moving",
+      "target": "B_is_Moving",
+      "topology": { "type": "fixed_probability", "probability": 0.9 },
+      "synapse": {
+        "weight": { "distribution": "uniform", "min": 0.0, "max": 0.1 },
+        "delay": 5.0,
+        "plasticity": { "learning_rate": 0.005, "max_weight": 5.0 }
+      }
+    }
+  ]
+}
