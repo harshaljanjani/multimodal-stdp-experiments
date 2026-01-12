@@ -1,0 +1,102 @@
+{
+    "neuron_populations": [
+        {
+            "name": "Vision_Left",
+            "count": 100,
+            "type": "sensory"
+        },
+        {
+            "name": "Vision_Center",
+            "count": 100,
+            "type": "sensory"
+        },
+        {
+            "name": "Vision_Right",
+            "count": 100,
+            "type": "sensory"
+        },
+        {
+            "name": "Motor_Forward",
+            "count": 50,
+            "type": "motor",
+            "params": {
+                "v_leak": -65.0,
+                "v_reset": -65.0,
+                "v_threshold": -50.0,
+                "tau_m": 10.0
+            }
+        },
+        {
+            "name": "Motor_Turn_L",
+            "count": 50,
+            "type": "motor",
+            "params": {
+                "v_leak": -65.0,
+                "v_reset": -65.0,
+                "v_threshold": -50.0,
+                "tau_m": 10.0
+            }
+        },
+        {
+            "name": "Motor_Turn_R",
+            "count": 50,
+            "type": "motor",
+            "params": {
+                "v_leak": -65.0,
+                "v_reset": -65.0,
+                "v_threshold": -50.0,
+                "tau_m": 10.0
+            }
+        }
+    ],
+    "synaptic_connections": [
+        {
+            "source": "Vision_Center",
+            "target": "Motor_Forward",
+            "topology": {
+                "type": "fixed_probability",
+                "probability": 0.5
+            },
+            "synapse": {
+                "weight": { "distribution": "uniform", "min": 0.1, "max": 0.5 },
+                "delay": { "distribution": "uniform", "min": 1, "max": 5 },
+                "plasticity": {
+                    "learning_rate": 0.005,
+                    "max_weight": 5.0
+                }
+            }
+        },
+        {
+            "source": "Vision_Left",
+            "target": "Motor_Turn_L",
+            "topology": {
+                "type": "fixed_probability",
+                "probability": 0.5
+            },
+            "synapse": {
+                "weight": { "distribution": "uniform", "min": 0.1, "max": 0.5 },
+                "delay": { "distribution": "uniform", "min": 1, "max": 5 },
+                "plasticity": {
+                    "learning_rate": 0.005,
+                    "max_weight": 5.0
+                }
+            }
+        },
+        {
+            "source": "Vision_Right",
+            "target": "Motor_Turn_R",
+            "topology": {
+                "type": "fixed_probability",
+                "probability": 0.5
+            },
+            "synapse": {
+                "weight": { "distribution": "uniform", "min": 0.1, "max": 0.5 },
+                "delay": { "distribution": "uniform", "min": 1, "max": 5 },
+                "plasticity": {
+                    "learning_rate": 0.005,
+                    "max_weight": 5.0
+                }
+            }
+        }
+    ]
+}
