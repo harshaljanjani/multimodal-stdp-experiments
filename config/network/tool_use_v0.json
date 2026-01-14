@@ -1,0 +1,93 @@
+{
+  "neuron_populations": [
+    {
+      "name": "Vision_Stick",
+      "count": 50,
+      "type": "sensory"
+    },
+    {
+      "name": "Vision_Ball",
+      "count": 50,
+      "type": "sensory"
+    },
+    {
+      "name": "Command_Go",
+      "count": 10,
+      "type": "sensory"
+    },
+    {
+      "name": "Motor_Push_Stick",
+      "count": 30,
+      "type": "motor",
+      "params": {
+        "v_leak": -70.0, "v_reset": -65.0, "v_threshold": -55.0, "tau_m": 15.0
+      }
+    },
+    {
+      "name": "Internal_E",
+      "count": 200,
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": -65.0, "v_reset": -65.0, "v_threshold": -50.0, "tau_m": 20.0
+      }
+    },
+    {
+      "name": "Internal_I",
+      "count": 50,
+      "model": "LeakyIntegrateAndFire",
+      "params": {
+        "v_leak": -60.0, "v_reset": -65.0, "v_threshold": -52.0, "tau_m": 10.0
+      }
+    }
+  ],
+  "synaptic_connections": [
+    {
+      "source": "Vision_Stick", "target": "Internal_E",
+      "topology": { "type": "fixed_probability", "probability": 0.2 },
+      "synapse": { "weight": 1.5, "delay": 2 }
+    },
+    {
+      "source": "Vision_Ball", "target": "Internal_E",
+      "topology": { "type": "fixed_probability", "probability": 0.2 },
+      "synapse": { "weight": 1.5, "delay": 2 }
+    },
+    {
+      "source": "Command_Go", "target": "Internal_E",
+      "topology": { "type": "fixed_probability", "probability": 0.5 },
+      "synapse": { "weight": 2.5, "delay": 1 }
+    },
+    {
+      "source": "Command_Go", "target": "Motor_Push_Stick",
+      "topology": { "type": "fixed_probability", "probability": 0.8 },
+      "synapse": { "weight": 3.0, "delay": 1 }
+    },
+    {
+      "source": "Internal_E", "target": "Internal_E",
+      "topology": { "type": "fixed_probability", "probability": 0.1, "allow_autapses": false },
+      "synapse": {
+        "weight": { "distribution": "uniform", "min": 0.0, "max": 0.1 },
+        "delay": { "distribution": "uniform", "min": 1, "max": 5 },
+        "plasticity": { "learning_rate": 0.004, "max_weight": 4.0 }
+      }
+    },
+    {
+      "source": "Internal_E", "target": "Internal_I",
+      "topology": { "type": "fixed_probability", "probability": 0.15 },
+      "synapse": { "weight": 1.2, "delay": 1 }
+    },
+    {
+      "source": "Internal_I", "target": "Internal_E",
+      "topology": { "type": "fixed_probability", "probability": 0.15 },
+      "synapse": { "weight": -1.8, "delay": 1 }
+    },
+    {
+      "source": "Internal_E", "target": "Motor_Push_Stick",
+      "topology": { "type": "fixed_probability", "probability": 0.2 },
+      "synapse": {
+        "weight": { "distribution": "uniform", "min": 0.0, "max": 0.2 },
+        "delay": { "distribution": "uniform", "min": 2, "max": 6 },
+        "plasticity": { "learning_rate": 0.008, "max_weight": 6.0 }
+      }
+    }
+  ]
+}

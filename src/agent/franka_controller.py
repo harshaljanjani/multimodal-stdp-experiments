@@ -2,14 +2,13 @@ import numpy as np
 from omni.isaac.core.utils.types import ArticulationAction
 
 class FrankaController:
-    def __init__(self, prim_path="/World/Franka", name="franka_robot", position=np.array([0.0, 0.0, 0.0])):
+    def __init__(self, prim_path="/World/Franka", name="franka_robot", position=np.array([0.0, 0.0, 0.0]), home_joint_positions=None, pre_push_joint_positions=None, push_joint_positions=None):
         self.prim_path = prim_path
         self.name = name
         self.position = position
-        base_rotation = np.pi / 2
-        self.home_joint_positions = np.array([base_rotation, -0.785, 0, -2.356, 0, 1.571, 0.785, 0.04, 0.04])
-        self.pre_push_joint_positions = np.array([base_rotation, 0.95, 0.0, -1.8, 0.0, 2.1, 0.785, 0.04, 0.04])
-        self.push_joint_positions = np.array([base_rotation, 0.95, 0.0, -1.5, 0.0, 2.1, 0.785, 0.04, 0.04])
+        self.home_joint_positions = home_joint_positions
+        self.pre_push_joint_positions = pre_push_joint_positions
+        self.push_joint_positions = push_joint_positions
         self._robot_articulation = None
         self._articulation_controller = None
 
@@ -31,18 +30,18 @@ class FrankaController:
         print("Robot controller initialized")
 
     def go_to_pre_push(self):
-        if self._articulation_controller is not None:
+        if self._articulation_controller is not None and self.pre_push_joint_positions is not None:
             action = ArticulationAction(joint_positions=self.pre_push_joint_positions)
             self._articulation_controller.apply_action(action)
 
     def push_forward(self):
         # push pos.
-        if self._articulation_controller is not None:
+        if self._articulation_controller is not None and self.push_joint_positions is not None:
             action = ArticulationAction(joint_positions=self.push_joint_positions)
             self._articulation_controller.apply_action(action)
         
     def retract(self):
         # home / retracted pos.
-        if self._articulation_controller is not None:
+        if self._articulation_controller is not None and self.home_joint_positions is not None:
             action = ArticulationAction(joint_positions=self.home_joint_positions)
             self._articulation_controller.apply_action(action)
