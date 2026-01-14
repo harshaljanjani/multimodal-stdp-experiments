@@ -1,23 +1,27 @@
 import numpy as np
-from omni.isaac.core.utils.stage import get_current_stage
-from pxr import PhysicsSchemaTools
 
 class TouchSystem:
     def __init__(self, robot_prim_path):
         self.robot_prim_path = robot_prim_path
         self.contact_threshold = 0.1
         self.last_contact_count = 0
+        self.stage = None
 
     def initialize(self):
+        from omni.isaac.core.utils.stage import get_current_stage
         self.stage = get_current_stage()
         print(f"[TOUCH] Touch system initialized for {self.robot_prim_path}")
 
     def get_contact_count(self):
-        # simple heuristic: check if robot prim has any contact reports
+        if self.stage is None:
+            return 0
         robot_prim = self.stage.GetPrimAtPath(self.robot_prim_path)
         if not robot_prim.IsValid():
             return 0
         # TODO: this is a simplified implementation; just for quick dev
+        # we'll be covering this when we do humanoid work; Jetbot is a wheeled
+        # robot; touch isn't all that important, but for humanoids, tacticle feedback
+        # is insurmountable.
         # we'll use PhysX contact report APIs or collision sensors down the line.
         # for now we'll return a placeholder that can be expanded
         contact_count = 0
