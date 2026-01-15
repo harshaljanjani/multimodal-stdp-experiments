@@ -35,8 +35,8 @@ def run_simulation():
     ie_to_motor_synapses = get_synapse_indices(network, pop_info, "Internal_E", "Motor_Push_Stick")
     w1_initial = get_average_weight(network, ie_to_ie_synapses)
     w2_initial = get_average_weight(network, ie_to_motor_synapses)
-    print(f"\nInitial Avg. Weight (Internal->Internal): {w1_initial:.4f}")
-    print(f"Initial Avg. Weight (Internal->Motor): {w2_initial:.4f}\n")
+    print(f"\nInitial Avg. Weight (Internal→Internal): {w1_initial:.4f}")
+    print(f"Initial Avg. Weight (Internal→Motor): {w2_initial:.4f}\n")
     # simulation loop
     num_trials = 50
     trial_duration_steps = 300
@@ -80,8 +80,8 @@ def run_simulation():
     w1_final = get_average_weight(network, ie_to_ie_synapses)
     w2_final = get_average_weight(network, ie_to_motor_synapses)
     print("\n=== FINAL WEIGHTS ===")
-    print(f"Avg. Weight (Internal->Internal): {w1_initial:.4f} -> {w1_final:.4f}")
-    print(f"Avg. Weight (Internal->Motor): {w2_initial:.4f} -> {w2_final:.4f}\n")
+    print(f"Avg. Weight (Internal→Internal): {w1_initial:.4f} → {w1_final:.4f}")
+    print(f"Avg. Weight (Internal→Motor): {w2_initial:.4f} → {w2_final:.4f}\n")
     # a simple check to see if any learning happened
     if w1_final > w1_initial * 1.5 and w2_final > w2_initial * 1.5:
         print("✓ SUCCESS: Hebbian learning strengthened internal and motor pathways.")

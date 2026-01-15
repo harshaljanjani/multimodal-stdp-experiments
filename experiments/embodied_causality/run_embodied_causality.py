@@ -108,14 +108,14 @@ def run_simulation():
             if step < push_duration_steps:
                 # extend arm.
                 robot_controller.push_forward()
-                # this is our scripted "intent to push"; we inject these spikes into the SNN for now.
+                # this is our scripted "intent to push"; we inject these spikes into the SNN.
                 pop = pop_info['Franka_Extend_Motor']
                 motor_spikes = cp.arange(pop['start'], pop['end'], dtype=cp.int32)
                 trial_motor_spikes += len(motor_spikes)
             else:
                 # retract.
                 robot_controller.retract()
-            # act -> handled by `robot_controller` calls.
+            # act → handled by `robot_controller` calls.
             spike_lists = [s for s in [motor_spikes, spikes_a, spikes_b] if s is not None]
             all_spikes = cp.concatenate(spike_lists) if spike_lists else None
             snn_simulator.step(sensory_spikes_indices=all_spikes)

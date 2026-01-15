@@ -30,8 +30,8 @@ def main():
     w2_indices = get_synapse_indices(network, pop_info, "A_is_Moving", "B_is_Moving")
     w1_initial = get_average_weight(network, w1_indices)
     w2_initial = get_average_weight(network, w2_indices)
-    print(f"\nInitial Avg. Weight (Push -> A_is_Moving): {w1_initial:.4f}")
-    print(f"Initial Avg. Weight (A_is_Moving -> B_is_Moving): {w2_initial:.4f}\n")
+    print(f"\nInitial Avg. Weight (Push → A_is_Moving): {w1_initial:.4f}")
+    print(f"Initial Avg. Weight (A_is_Moving → B_is_Moving): {w2_initial:.4f}\n")
     num_trials = 50
     trial_duration_ms = 100
     trial_steps = int(trial_duration_ms / sim_config['dt'])
@@ -57,8 +57,8 @@ def main():
     w1_final = get_average_weight(network, w1_indices)
     w2_final = get_average_weight(network, w2_indices)
     print("=== LEARNING VERIFICATION ===")
-    print(f"Avg. Weight (Push -> A_is_Moving): {w1_initial:.4f} -> {w1_final:.4f}")
-    print(f"Avg. Weight (A_is_Moving -> B_is_Moving): {w2_initial:.4f} -> {w2_final:.4f}\n")
+    print(f"Avg. Weight (Push → A_is_Moving): {w1_initial:.4f} → {w1_final:.4f}")
+    print(f"Avg. Weight (A_is_Moving → B_is_Moving): {w2_initial:.4f} → {w2_final:.4f}\n")
     if w1_final > w1_initial * 1.5 and w2_final > w2_initial * 1.5:
         print("SUCCESS: Causal links were learned and strengthened via STDP.")
     else:

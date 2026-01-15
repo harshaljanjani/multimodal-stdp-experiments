@@ -64,7 +64,7 @@ class IntuitivePhysicsEngine:
         if len(objects) < 2:
             return
         # extract causal chains from snn architecture
-        # for embodied_causality: motor -> b_moving -> a_moving
+        # for embodied_causality: motor → b_moving → a_moving
         causal_chains = [
             ("Franka_Extend_Motor", "B_is_Moving"),
             ("B_is_Moving", "A_is_Moving"),
@@ -81,8 +81,7 @@ class IntuitivePhysicsEngine:
         obj = object_tracker.get_object(target_object_id)
         if obj is None:
             return "unknown"
-        # TODO: simple rule-based prediction for now
-        # later: use learned causal graph
+        # NOTE: this method has been replaced with `CHG`; but keeping it if we need it down the line for dummy testing.
         action_effects = self.get_all_effects(action)
         if not action_effects:
             return "uncertain"
@@ -110,5 +109,5 @@ class IntuitivePhysicsEngine:
         for cause, effects in self.causal_graph.items():
             for effect, strength in effects.items():
                 confidence = "HIGH" if strength > 0.7 else "MED" if strength > 0.3 else "LOW"
-                print(f"  {cause} -> {effect} (strength: {strength:.3f}, confidence: {confidence})")
+                print(f"  {cause} → {effect} (strength: {strength:.3f}, confidence: {confidence})")
         print("===================\n")

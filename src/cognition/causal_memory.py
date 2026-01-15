@@ -27,5 +27,5 @@ class CausalMemory:
             return
         for cause, effects in self.causal_graph.items():
             for effect, strength in effects.items():
-                print(f"  {cause} -> {effect} (Strength: {strength:.4f})")
+                print(f"  {cause} → {effect} (Strength: {strength:.4f})")
         print("============================\n")
